@@ -1,0 +1,159 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// 用户 & 工作区（多人协作）
+// ============================================================
+
+model User {
+  id           String            @id @default(cuid())
+  email        String            @unique
+  passwordHash String
+  displayName  String
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  memberships  WorkspaceMember[]
+}
+
+model Workspace {
+  id        String            @id @default(cuid())
+  name      String
+  ownerId   String
+  members   WorkspaceMember[]
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+}
+
+model WorkspaceMember {
+  id             String    @id @default(cuid())
+  workspaceId    String
+  userId         String
+  role           String    // "owner" | "editor" | "viewer"
+  resourceScopes String    // JSON array: ["schedule-course","study-plan","daily-agenda"]
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace      Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+}
+
+// ============================================================
+// 学期配置（课程表依赖）
+// ============================================================
+
+model Semester {
+  id        String   @id @default(cuid())
+  name      String   // e.g. "2026 春季学期"
+  startDate DateTime // 学期开始日期（周一）
+  endDate   DateTime // 学期结束日期
+  weekCount Int      // 总周数（通常 20）
+  workspaceId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================================
+// 模块 1：课程表（教师日历版）
+// ============================================================
+
+model CourseItem {
+  id          String   @id @default(cuid())
+  workspaceId String
+  courseName  String
+  teacher     String
+  startAt     DateTime   // 课程开始时间 ISO datetime
+  endAt       DateTime   // 课程结束时间 ISO datetime
+  timezone    String     // "Asia/Shanghai" | "Asia/Tokyo"
+  color       String     // 课程颜色 hex
+  note        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ============================================================
+// 模块 2：学习计划
+// ============================================================
+
+model Subject {
+  id          String   @id @default(cuid())
+  workspaceId String
+  name        String
+  color       String   @default("#6366f1")
+  isWeak      Boolean  @default(false) // 薄弱科目标记
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  tasks       StudyTask[]
+}
+
+model StudyTask {
+  id              String   @id @default(cuid())
+  workspaceId     String
+  subjectId       String?
+  subject         String   // 冗余字段，方便查询
+  targetCycle     String   // e.g. "2026-Q2", "2026-05"
+  plannedMinutes  Int      // 计划学习时长（分钟）
+  taskDetail      String
+  status          String   // "todo" | "doing" | "done"
+  startDate       DateTime
+  dueDate         DateTime?
+  priority        String   // "low" | "medium" | "high"
+  relatedNote     String?
+  reviewCycleDays Int?     // 艾宾浩斯复习周期（天）
+  pomodoroCount   Int      @default(0) // 番茄钟完成数
+  checkInDates    String   @default("[]") // JSON array: 打卡日期 ["2026-05-01","2026-05-02"]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  subjectRel      Subject? @relation(fields: [subjectId], references: [id])
+}
+
+// ============================================================
+// 模块 3：日程安排
+// ============================================================
+
+model AgendaItem {
+  id             String    @id @default(cuid())
+  workspaceId    String
+  title          String
+  startAt        DateTime
+  endAt          DateTime
+  location       String?
+  category       String    @default("other") // "work"|"study"|"health"|"social"|"other"
+  tags           String    @default("[]")    // JSON array
+  recurrenceRule String?   // RRULE 格式: "FREQ=WEEKLY;BYDAY=MO,WE,FR"
+  reminderAt     DateTime?
+  priority       String    // "low" | "medium" | "high"
+  note           String?
+  status         String    // "todo" | "done"
+  archivedAt     DateTime? // 归档时间，非空表示已归档
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+// ============================================================
+// 同步日志 & 审计日志
+// ============================================================
+
+model SyncLog {
+  id        String   @id @default(cuid())
+  workspaceId String
+  module    String
+  entityId  String
+  operation String   // "create" | "update" | "delete"
+  field     String?
+  valueJson String?
+  ts        DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  workspaceId String
+  module    String
+  entityId  String
+  message   String
+  ts        DateTime @default(now())
+}
