@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 import { videoApi, VideoDTO } from "../../api/new-client";
 
 export default function VideoPage() {
@@ -16,7 +18,12 @@ export default function VideoPage() {
   return (
     <div>
       <div className="page-header">
-        <h1>🎬 {t("nav.video")}</h1>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <Link to="/dashboard" className="btn btn-sm" title="返回仪表盘">
+            <ArrowLeft size={16} />
+          </Link>
+          <h1>🎬 {t("nav.video")}</h1>
+        </div>
       </div>
       <div className="card">
         <p style={{ color: "var(--text-secondary)", padding: "2rem", textAlign: "center" }}>

@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 import { calendarApi, courseApi, studyTaskApi, agendaApi, type CalendarEventDTO } from "../../api/client";
 
 const WEEKDAYS = ["日", "一", "二", "三", "四", "五", "六"];
@@ -245,7 +246,12 @@ export default function CalendarPage() {
   return (
     <div>
       <div className="page-header">
-        <h1>📅 日历总览</h1>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <Link to="/dashboard" className="btn btn-sm" title="返回仪表盘">
+            <ArrowLeft size={16} />
+          </Link>
+          <h1>📅 日历总览</h1>
+        </div>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           {MODULE_OPTIONS.map((opt) => (
             <label

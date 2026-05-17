@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Sun, Moon, Palette } from "lucide-react";
+import { Sun, Moon, Palette, ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const THEME_COLORS = [
   { primary: "#6366f1", name: "靛蓝" },
@@ -36,7 +37,12 @@ export default function SettingsPage() {
   return (
     <div>
       <div className="page-header">
-        <h1>⚙️ 设置</h1>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <Link to="/dashboard" className="btn btn-sm" title="返回仪表盘">
+            <ArrowLeft size={16} />
+          </Link>
+          <h1>⚙️ 设置</h1>
+        </div>
       </div>
 
       <div className="grid-2">

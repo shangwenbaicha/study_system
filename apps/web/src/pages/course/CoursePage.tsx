@@ -1,7 +1,8 @@
 ﻿import { useEffect, useRef, useState } from "react";
-import { Plus, Edit3, Trash2, Copy, ChevronLeft, ChevronRight, Download, X } from "lucide-react";
-import { courseApi, exportApi, type CourseDTO } from "../../api/client";
+import { Plus, Edit3, Trash2, Copy, ChevronLeft, ChevronRight, Download, X, ArrowLeft, BookOpen, ListTodo } from "lucide-react";
+import { courseApi, studyTaskApi, agendaApi, exportApi, type CourseDTO, type StudyTaskDTO, type AgendaDTO } from "../../api/client";
 import { showToast } from "../../components/Toast";
+import { Link } from "react-router-dom";
 
 const COLORS = ["#6366f1", "#22c55e", "#f59e0b", "#ef4444", "#06b6d4", "#ec4899", "#8b5cf6", "#14b8a6"];
 const WEEKDAYS = ["日", "一", "二", "三", "四", "五", "六"];
@@ -64,6 +65,8 @@ const buildIsoFromTimezoneParts = (
 
 export default function CoursePage() {
   const [courses, setCourses] = useState<CourseDTO[]>([]);
+  const [studyTasks, setStudyTasks] = useState<StudyTaskDTO[]>([]);
+  const [agendaItems, setAgendaItems] = useState<AgendaDTO[]>([]);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState<CourseDTO | null>(null);
@@ -72,6 +75,8 @@ export default function CoursePage() {
   const [copyTargetDates, setCopyTargetDates] = useState<string[]>([]);
   const [dragOverDay, setDragOverDay] = useState<number | null>(null);
   const [isDropping, setIsDropping] = useState(false);
+  const [showStudyPanel, setShowStudyPanel] = useState(false);
+  const [showAgendaPanel, setShowAgendaPanel] = useState(false);
   const dragNodeRef = useRef<HTMLElement | null>(null);
 
   const year = currentDate.getFullYear();
@@ -379,11 +384,52 @@ export default function CoursePage() {
 
   const getTimezoneLabel = (tz: string) => (tz === "Asia/Shanghai" ? "北京时间" : "东京时间");
 
+  // 加载学习计划和日程数据
+  const loadStudyAndAgenda = async () => {
+    try {
+      const [tasks, items] = await Promise.all([
+        studyTaskApi.list(),
+        agendaApi.list(),
+      ]);
+      setStudyTasks(tasks);
+      setAgendaItems(items);
+    } catch (err) {
+      console.error("Failed to load study/agenda data", err);
+    }
+  };
+
+  useEffect(() => {
+    loadStudyAndAgenda();
+  }, []);
+
+  // 当月学习任务
+  const monthTasks = studyTasks.filter((t) => {
+    const d = new Date(t.startDate);
+    return d.getFullYear() === year && d.getMonth() === month;
+  });
+
+  // 当月日程
+  const monthAgenda = agendaItems.filter((i) => {
+    const d = new Date(i.startAt);
+    return d.getFullYear() === year && d.getMonth() === month;
+  });
+
   return (
     <div>
       <div className="page-header">
-        <h1>课程表</h1>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <Link to="/dashboard" className="btn btn-sm" title="返回仪表盘">
+            <ArrowLeft size={16} />
+          </Link>
+          <h1>课程表</h1>
+        </div>
         <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+          <Link to="/study" className="btn btn-sm" title="学习计划">
+            <BookOpen size={14} /> 学习计划
+          </Link>
+          <Link to="/agenda" className="btn btn-sm" title="日程安排">
+            <ListTodo size={14} /> 日程安排
+          </Link>
           <button className="btn btn-sm" onClick={handleExportPdf}>
             <Download size={14} /> 导出PDF
           </button>
@@ -643,6 +689,153 @@ export default function CoursePage() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* 学习计划面板 */}
+      {showStudyPanel && (
+        <div className="card" style={{ marginTop: "1.5rem" }}>
+          <div className="card-header">
+            <h2>
+              <BookOpen size={16} style={{ marginRight: "0.5rem", color: "var(--primary)" }} />
+              学习计划
+            </h2>
+            <Link to="/study" className="btn btn-sm">
+              查看全部
+            </Link>
+          </div>
+          {monthTasks.length === 0 ? (
+            <div className="empty-state">
+              <p>本月暂无学习任务</p>
+            </div>
+          ) : (
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>任务</th>
+                  <th>科目</th>
+                  <th>时长</th>
+                  <th>日期</th>
+                  <th>状态</th>
+                </tr>
+              </thead>
+              <tbody>
+                {monthTasks.slice(0, 10).map((t) => (
+                  <tr key={t.id}>
+                    <td style={{ fontWeight: 500 }}>{t.taskDetail}</td>
+                    <td><span className="badge badge-primary">{t.subject}</span></td>
+                    <td>{t.plannedMinutes}分钟</td>
+                    <td style={{ fontSize: "0.8rem" }}>{t.startDate}</td>
+                    <td>
+                      <span
+                        className="badge"
+                        style={{
+                          background:
+                            t.status === "done"
+                              ? "rgba(34,197,94,0.1)"
+                              : t.status === "doing"
+                              ? "rgba(245,158,11,0.1)"
+                              : "rgba(148,163,184,0.1)",
+                          color:
+                            t.status === "done"
+                              ? "var(--success)"
+                              : t.status === "doing"
+                              ? "var(--warning)"
+                              : "var(--text-secondary)",
+                        }}
+                      >
+                        {t.status === "done" ? "已完成" : t.status === "doing" ? "进行中" : "待开始"}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      )}
+
+      {/* 日程安排面板 */}
+      {showAgendaPanel && (
+        <div className="card" style={{ marginTop: "1.5rem" }}>
+          <div className="card-header">
+            <h2>
+              <ListTodo size={16} style={{ marginRight: "0.5rem", color: "var(--warning)" }} />
+              日程安排
+            </h2>
+            <Link to="/agenda" className="btn btn-sm">
+              查看全部
+            </Link>
+          </div>
+          {monthAgenda.length === 0 ? (
+            <div className="empty-state">
+              <p>本月暂无日程安排</p>
+            </div>
+          ) : (
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>标题</th>
+                  <th>时间</th>
+                  <th>分类</th>
+                  <th>优先级</th>
+                  <th>状态</th>
+                </tr>
+              </thead>
+              <tbody>
+                {monthAgenda.slice(0, 10).map((item) => (
+                  <tr key={item.id}>
+                    <td style={{ fontWeight: 500 }}>{item.title}</td>
+                    <td style={{ fontSize: "0.8rem" }}>
+                      {new Date(item.startAt).toLocaleString("zh-CN", {
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </td>
+                    <td>
+                      <span className="badge" style={{ background: "rgba(99,102,241,0.1)", color: "#6366f1" }}>
+                        {item.category === "work" ? "工作" : item.category === "study" ? "学习" : item.category === "health" ? "健康" : item.category === "social" ? "社交" : "其他"}
+                      </span>
+                    </td>
+                    <td>
+                      <span
+                        className="badge"
+                        style={{
+                          background:
+                            item.priority === "high"
+                              ? "rgba(239,68,68,0.1)"
+                              : item.priority === "medium"
+                              ? "rgba(245,158,11,0.1)"
+                              : "rgba(100,116,139,0.1)",
+                          color:
+                            item.priority === "high"
+                              ? "var(--danger)"
+                              : item.priority === "medium"
+                              ? "var(--warning)"
+                              : "var(--text-secondary)",
+                        }}
+                      >
+                        {item.priority === "high" ? "高" : item.priority === "medium" ? "中" : "低"}
+                      </span>
+                    </td>
+                    <td>
+                      <span
+                        className="badge"
+                        style={{
+                          background: item.status === "done" ? "rgba(34,197,94,0.1)" : "rgba(148,163,184,0.1)",
+                          color: item.status === "done" ? "var(--success)" : "var(--text-secondary)",
+                        }}
+                      >
+                        {item.status === "done" ? "已完成" : "待办"}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       )}
 

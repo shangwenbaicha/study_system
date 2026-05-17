@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import { wordbookApi, type WordBookDTO, type WordDTO, type StudyStatsDTO } from "../../api/new-client";
-import { BookOpen, Plus, Trash2, BarChart3, CheckCircle, Clock, Award, Calendar, Download, X, Volume2, ChevronDown, ChevronUp } from "lucide-react";
+import { BookOpen, Plus, Trash2, BarChart3, CheckCircle, Clock, Award, Calendar, Download, X, Volume2, ChevronDown, ChevronUp, ArrowLeft } from "lucide-react";
 import { useSpeech } from "../../hooks/use-speech";
 
 export default function WordBookPage() {
@@ -108,9 +109,14 @@ export default function WordBookPage() {
   return (
     <div className="wordbook-page">
       <div className="page-header">
-        <h1>
-          <BookOpen size={24} /> {t("wordbook.title")}
-        </h1>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <Link to="/dashboard" className="btn btn-sm" title="返回仪表盘">
+            <ArrowLeft size={16} />
+          </Link>
+          <h1>
+            <BookOpen size={24} /> {t("wordbook.title")}
+          </h1>
+        </div>
         <div className="tab-bar">
           <button
             className={`tab-btn ${tab === "books" ? "active" : ""}`}

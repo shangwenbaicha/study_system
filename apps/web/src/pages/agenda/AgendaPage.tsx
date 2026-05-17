@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Plus, Edit3, Trash2, CheckCircle, Clock, Archive } from "lucide-react";
+import { Plus, Edit3, Trash2, Archive, ArrowLeft, CheckCircle } from "lucide-react";
 import { agendaApi, type AgendaDTO } from "../../api/client";
 import { showToast } from "../../components/Toast";
+import { Link } from "react-router-dom";
 
 const CATEGORIES = [
   { value: "work", label: "工作", color: "#6366f1" },
@@ -154,7 +155,12 @@ export default function AgendaPage() {
   return (
     <div>
       <div className="page-header">
-        <h1>📋 日程安排</h1>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <Link to="/dashboard" className="btn btn-sm" title="返回仪表盘">
+            <ArrowLeft size={16} />
+          </Link>
+          <h1>📋 日程安排</h1>
+        </div>
         <div style={{ display: "flex", gap: "0.5rem" }}>
           <button
             className={`btn btn-sm ${showArchived ? "btn-primary" : ""}`}

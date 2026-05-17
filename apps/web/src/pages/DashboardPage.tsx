@@ -9,7 +9,6 @@ import {
   Globe,
   MessageCircle,
   Calendar,
-  ListTodo,
   BarChart3,
   LogOut,
   Sun,
@@ -64,8 +63,6 @@ export default function DashboardPage() {
     { icon: Globe, path: "/translate", label: t("nav.translate"), color: "#10b981" },
     { icon: MessageCircle, path: "/community", label: t("nav.community"), color: "#3b82f6" },
     { icon: Calendar, path: "/course", label: t("nav.course"), color: "#ef4444" },
-    { icon: ListTodo, path: "/study", label: t("nav.study"), color: "#14b8a6" },
-    { icon: Calendar, path: "/agenda", label: t("nav.agenda"), color: "#f97316" },
     { icon: Calendar, path: "/calendar", label: t("nav.calendar"), color: "#06b6d4" },
     { icon: BarChart3, path: "/analytics", label: t("nav.analytics"), color: "#8b5cf6" },
   ];

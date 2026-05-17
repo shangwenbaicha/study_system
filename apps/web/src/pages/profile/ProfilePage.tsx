@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 import { authApi, AuthUser } from "../../api/new-client";
 
 export default function ProfilePage() {
@@ -29,7 +31,12 @@ export default function ProfilePage() {
   return (
     <div>
       <div className="page-header">
-        <h1>👤 {t("nav.profile") || "个人中心"}</h1>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <Link to="/dashboard" className="btn btn-sm" title="返回仪表盘">
+            <ArrowLeft size={16} />
+          </Link>
+          <h1>👤 {t("nav.profile") || "个人中心"}</h1>
+        </div>
       </div>
 
       <div className="card" style={{ maxWidth: 480, margin: "0 auto" }}>

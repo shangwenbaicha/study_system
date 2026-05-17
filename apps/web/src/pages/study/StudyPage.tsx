@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Plus, Edit3, Trash2, CheckCircle, Clock, Play } from "lucide-react";
+import { Plus, Edit3, Trash2, CheckCircle, Clock, Play, ArrowLeft } from "lucide-react";
 import { studyTaskApi, subjectApi, type StudyTaskDTO, type SubjectDTO } from "../../api/client";
 import { showToast } from "../../components/Toast";
+import { Link } from "react-router-dom";
 
 const PRIORITY_COLORS: Record<string, string> = {
   high: "var(--danger)",
@@ -139,7 +140,12 @@ export default function StudyPage() {
   return (
     <div>
       <div className="page-header">
-        <h1>📖 学习计划</h1>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <Link to="/dashboard" className="btn btn-sm" title="返回仪表盘">
+            <ArrowLeft size={16} />
+          </Link>
+          <h1>📖 学习计划</h1>
+        </div>
         <button className="btn btn-primary" onClick={openCreate}>
           <Plus size={16} /> 添加任务
         </button>
