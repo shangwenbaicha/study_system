@@ -9,12 +9,14 @@
     "preview": "vite preview --host --port 4173"
   },
   "dependencies": {
+    "dayjs": "^1.11.13",
+    "i18next": "^26.2.0",
+    "lucide-react": "^0.510.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-i18next": "^17.0.8",
     "react-router-dom": "^7.6.0",
-    "dayjs": "^1.11.13",
-    "recharts": "^2.15.3",
-    "lucide-react": "^0.510.0"
+    "recharts": "^2.15.3"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^5.0.4",

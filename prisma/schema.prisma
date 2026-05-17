@@ -16,9 +16,20 @@ model User {
   email        String            @unique
   passwordHash String
   displayName  String
+  role         String            @default("user") // "user" | "admin" | "banned"
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
   memberships  WorkspaceMember[]
+  wordBooks    WordBook[]
+  wordReviews  WordReview[]
+  examAttempts ExamAttempt[]
+  mistakes     MistakeItem[]
+  videos       VideoResource[]
+  videoProgress VideoProgress[]
+  posts        Post[]
+  comments     Comment[]
+  postLikes    PostLike[]
+  checkIns     StudyCheckIn[]
 }
 
 model Workspace {
@@ -48,17 +59,17 @@ model WorkspaceMember {
 
 model Semester {
   id        String   @id @default(cuid())
-  name      String   // e.g. "2026 春季学期"
-  startDate DateTime // 学期开始日期（周一）
-  endDate   DateTime // 学期结束日期
-  weekCount Int      // 总周数（通常 20）
+  name      String
+  startDate DateTime
+  endDate   DateTime
+  weekCount Int
   workspaceId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 // ============================================================
-// 模块 1：课程表（教师日历版）
+// 模块 1：课程表
 // ============================================================
 
 model CourseItem {
@@ -66,10 +77,10 @@ model CourseItem {
   workspaceId String
   courseName  String
   teacher     String
-  startAt     DateTime   // 课程开始时间 ISO datetime
-  endAt       DateTime   // 课程结束时间 ISO datetime
-  timezone    String     // "Asia/Shanghai" | "Asia/Tokyo"
-  color       String     // 课程颜色 hex
+  startAt     DateTime
+  endAt       DateTime
+  timezone    String   // "Asia/Shanghai" | "Asia/Tokyo"
+  color       String
   note        String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -84,7 +95,7 @@ model Subject {
   workspaceId String
   name        String
   color       String   @default("#6366f1")
-  isWeak      Boolean  @default(false) // 薄弱科目标记
+  isWeak      Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   tasks       StudyTask[]
@@ -94,18 +105,18 @@ model StudyTask {
   id              String   @id @default(cuid())
   workspaceId     String
   subjectId       String?
-  subject         String   // 冗余字段，方便查询
-  targetCycle     String   // e.g. "2026-Q2", "2026-05"
-  plannedMinutes  Int      // 计划学习时长（分钟）
+  subject         String
+  targetCycle     String
+  plannedMinutes  Int
   taskDetail      String
   status          String   // "todo" | "doing" | "done"
   startDate       DateTime
   dueDate         DateTime?
   priority        String   // "low" | "medium" | "high"
   relatedNote     String?
-  reviewCycleDays Int?     // 艾宾浩斯复习周期（天）
-  pomodoroCount   Int      @default(0) // 番茄钟完成数
-  checkInDates    String   @default("[]") // JSON array: 打卡日期 ["2026-05-01","2026-05-02"]
+  reviewCycleDays Int?
+  pomodoroCount   Int      @default(0)
+  checkInDates    String   @default("[]")
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   subjectRel      Subject? @relation(fields: [subjectId], references: [id])
@@ -122,16 +133,267 @@ model AgendaItem {
   startAt        DateTime
   endAt          DateTime
   location       String?
-  category       String    @default("other") // "work"|"study"|"health"|"social"|"other"
-  tags           String    @default("[]")    // JSON array
-  recurrenceRule String?   // RRULE 格式: "FREQ=WEEKLY;BYDAY=MO,WE,FR"
+  category       String    @default("other")
+  tags           String    @default("[]")
+  recurrenceRule String?
   reminderAt     DateTime?
   priority       String    // "low" | "medium" | "high"
   note           String?
   status         String    // "todo" | "done"
-  archivedAt     DateTime? // 归档时间，非空表示已归档
+  archivedAt     DateTime?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
+}
+
+// ============================================================
+// 模块 4：背单词（艾宾浩斯记忆）
+// ============================================================
+
+model WordBook {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String   // "日语N5核心1000", "英语四级" 等
+  language  String   // "japanese" | "english" | "other"
+  wordCount Int      @default(0)
+  isBuiltIn Boolean  @default(false) // 是否为内置词库
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  words     Word[]
+}
+
+model Word {
+  id              String   @id @default(cuid())
+  wordBookId      String
+  word            String   // 单词本身
+  reading         String?  // 读音（假名/音标）
+  meaning         String   // 释义
+  partOfSpeech    String?  // 词性
+  exampleSentence String?  // 例句
+  exampleTranslation String? // 例句翻译
+  audioUrl        String?  // 发音音频URL
+  createdAt       DateTime @default(now())
+  wordBook        WordBook @relation(fields: [wordBookId], references: [id], onDelete: Cascade)
+  reviews         WordReview[]
+}
+
+model WordReview {
+  id            String   @id @default(cuid())
+  wordId        String
+  userId        String
+  easeFactor    Float    @default(2.5) // SM-2 算法参数
+  interval      Int      @default(0)   // 复习间隔（天）
+  repetitions   Int      @default(0)   // 重复次数
+  nextReviewAt  DateTime // 下次复习时间
+  lastReviewAt  DateTime @default(now())
+  status        String   @default("learning") // "learning" | "reviewing" | "mastered"
+  word          Word     @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([wordId, userId])
+}
+
+model StudyCheckIn {
+  id        String   @id @default(cuid())
+  userId    String
+  date      DateTime // 打卡日期（只存年月日）
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+}
+
+// ============================================================
+// 模块 5：语法学习
+// ============================================================
+
+model GrammarPoint {
+  id          String   @id @default(cuid())
+  language    String   // "japanese"
+  title       String   // "〜は〜です"
+  level       String   // "N5" | "N4" | "N3" | "N2" | "N1"
+  explanation String   // 语法说明（Markdown）
+  category    String   // "助詞" | "動詞" | "敬語" 等
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  examples    GrammarExample[]
+  quizzes     GrammarQuiz[]
+}
+
+model GrammarExample {
+  id              String   @id @default(cuid())
+  grammarPointId  String
+  sentence        String   // 日文例句
+  reading         String?  // 假名注音
+  translation     String   // 中文/英文翻译
+  audioUrl        String?  // 音频
+  grammarPoint    GrammarPoint @relation(fields: [grammarPointId], references: [id], onDelete: Cascade)
+}
+
+model GrammarQuiz {
+  id              String   @id @default(cuid())
+  grammarPointId  String
+  question        String   // 题目
+  options         String   // JSON 数组 ["A","B","C","D"]
+  correctAnswer   String
+  explanation     String?
+  grammarPoint    GrammarPoint @relation(fields: [grammarPointId], references: [id], onDelete: Cascade)
+}
+
+// ============================================================
+// 模块 6：模拟真题
+// ============================================================
+
+model Exam {
+  id          String   @id @default(cuid())
+  title       String   // "2024年JLPT N2 模拟"
+  language    String   // "japanese"
+  level       String   // "N1" | "N2" | "N3" | "N4" | "N5"
+  timeLimit   Int      // 限时（分钟）
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  questions   ExamQuestion[]
+  attempts    ExamAttempt[]
+}
+
+model ExamQuestion {
+  id            String   @id @default(cuid())
+  examId        String
+  section       String   // "文字語彙" | "読解" | "聴解"
+  questionNum   Int
+  question      String   // 题目内容（支持图片/音频）
+  options       String   // JSON 数组
+  correctAnswer String
+  explanation   String?  // 解析
+  points        Int      @default(1)
+  exam          Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+}
+
+model ExamAttempt {
+  id          String   @id @default(cuid())
+  examId      String
+  userId      String
+  startedAt   DateTime @default(now())
+  completedAt DateTime?
+  score       Int?
+  totalPoints Int?
+  answers     String   @default("[]") // JSON: [{questionId, selectedAnswer, isCorrect}]
+  exam        Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model MistakeItem {
+  id            String   @id @default(cuid())
+  userId        String
+  questionId    String
+  examId        String?
+  wrongAnswer   String
+  correctAnswer String
+  reviewed      Boolean  @default(false)
+  reviewedAt    DateTime?
+  createdAt     DateTime @default(now())
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ============================================================
+// 模块 7：视频学习
+// ============================================================
+
+model VideoResource {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String
+  url         String   // YouTube URL 或上传文件路径
+  sourceType  String   // "youtube" | "upload" | "embedded"
+  language    String   // "japanese" | "english"
+  duration    Int?     // 秒
+  thumbnail   String?  // 缩略图URL
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notes       VideoNote[]
+  progress    VideoProgress[]
+}
+
+model VideoNote {
+  id          String   @id @default(cuid())
+  videoId     String
+  timestamp   Float    // 视频时间点（秒）
+  content     String
+  createdAt   DateTime @default(now())
+  video       VideoResource @relation(fields: [videoId], references: [id], onDelete: Cascade)
+}
+
+model VideoProgress {
+  id           String   @id @default(cuid())
+  videoId      String
+  userId       String
+  progress     Float    @default(0) // 0.0 - 1.0
+  lastPosition Float    @default(0) // 最后观看位置（秒）
+  completed    Boolean  @default(false)
+  updatedAt    DateTime @updatedAt
+  video        VideoResource @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([videoId, userId])
+}
+
+// ============================================================
+// 模块 8：社群
+// ============================================================
+
+model Post {
+  id        String    @id @default(cuid())
+  userId    String
+  title     String
+  content   String    // Markdown 全文
+  tags      String    @default("[]") // JSON 数组
+  language  String    @default("zh") // "zh" | "ja" | "en"
+  likes     Int       @default(0)
+  views     Int       @default(0)
+  pinned    Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comments  Comment[]
+  postLikes PostLike[]
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PostLike {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  createdAt DateTime @default(now())
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+}
+
+// ============================================================
+// 翻译缓存
+// ============================================================
+
+model TranslationCache {
+  id            String   @id @default(cuid())
+  sourceText    String
+  sourceLang    String
+  targetLang    String
+  translatedText String
+  createdAt     DateTime @default(now())
+  expiresAt     DateTime
+
+  @@unique([sourceText, sourceLang, targetLang])
 }
 
 // ============================================================

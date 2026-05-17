@@ -1,0 +1,122 @@
+{
+  "app": {
+    "title": "日语学习系统",
+    "subtitle": "高效学习，从今天开始"
+  },
+  "nav": {
+    "home": "首页",
+    "wordbook": "背单词",
+    "grammar": "语法学习",
+    "exam": "模拟真题",
+    "video": "视频学习",
+    "translate": "翻译",
+    "course": "课程表",
+    "study": "学习计划",
+    "agenda": "日程安排",
+    "calendar": "日历总览",
+    "analytics": "数据分析",
+    "community": "社群",
+    "backup": "备份管理",
+    "settings": "设置",
+    "core": "核心模块",
+    "global": "全局功能"
+  },
+  "auth": {
+    "login": "登录",
+    "register": "注册",
+    "email": "邮箱",
+    "password": "密码",
+    "displayName": "昵称",
+    "loginTitle": "欢迎回来",
+    "registerTitle": "创建账号",
+    "noAccount": "还没有账号？",
+    "hasAccount": "已有账号？",
+    "logout": "退出登录"
+  },
+  "wordbook": {
+    "title": "背单词",
+    "myWordbooks": "我的词书",
+    "builtIn": "内置词库",
+    "createWordbook": "创建词书",
+    "wordName": "单词",
+    "reading": "读音",
+    "meaning": "释义",
+    "partOfSpeech": "词性",
+    "example": "例句",
+    "import": "批量导入",
+    "review": "今日复习",
+    "stats": "学习统计",
+    "totalWords": "总单词数",
+    "learned": "已学",
+    "reviewing": "复习中",
+    "mastered": "已掌握",
+    "streak": "连续打卡",
+    "checkIn": "打卡",
+    "score": "评分",
+    "nextReview": "下次复习"
+  },
+  "grammar": {
+    "title": "语法学习",
+    "level": "级别",
+    "category": "分类",
+    "explanation": "语法说明",
+    "examples": "例句",
+    "quiz": "自测",
+    "submit": "提交答案",
+    "correct": "正确！",
+    "incorrect": "错误",
+    "allLevels": "全部级别"
+  },
+  "exam": {
+    "title": "模拟真题",
+    "start": "开始考试",
+    "submit": "交卷",
+    "timeLimit": "限时",
+    "minutes": "分钟",
+    "score": "得分",
+    "mistakes": "错题本",
+    "review": "查看解析",
+    "section": "题型"
+  },
+  "video": {
+    "title": "视频学习",
+    "addVideo": "添加视频",
+    "youtube": "YouTube",
+    "upload": "上传",
+    "embedded": "嵌入",
+    "note": "笔记",
+    "progress": "学习进度"
+  },
+  "translate": {
+    "title": "翻译",
+    "input": "输入文本",
+    "output": "翻译结果",
+    "source": "源语言",
+    "target": "目标语言",
+    "translate": "翻译"
+  },
+  "community": {
+    "title": "学习社群",
+    "newPost": "发布帖子",
+    "comments": "评论",
+    "like": "点赞",
+    "share": "分享",
+    "tags": "标签"
+  },
+  "common": {
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "edit": "编辑",
+    "create": "创建",
+    "search": "搜索",
+    "loading": "加载中...",
+    "error": "出错了",
+    "success": "操作成功",
+    "confirm": "确认",
+    "export": "导出",
+    "import": "导入",
+    "darkMode": "深色模式",
+    "lightMode": "浅色模式"
+  }
+}

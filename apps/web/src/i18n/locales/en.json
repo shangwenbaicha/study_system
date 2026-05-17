@@ -1,0 +1,122 @@
+{
+  "app": {
+    "title": "Language Learning System",
+    "subtitle": "Learn efficiently, starting today"
+  },
+  "nav": {
+    "home": "Home",
+    "wordbook": "Vocabulary",
+    "grammar": "Grammar",
+    "exam": "Practice Exams",
+    "video": "Video Learning",
+    "translate": "Translate",
+    "course": "Schedule",
+    "study": "Study Plan",
+    "agenda": "Agenda",
+    "calendar": "Calendar",
+    "analytics": "Analytics",
+    "community": "Community",
+    "backup": "Backup",
+    "settings": "Settings",
+    "core": "Core Modules",
+    "global": "Global Features"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "displayName": "Display Name",
+    "loginTitle": "Welcome Back",
+    "registerTitle": "Create Account",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "logout": "Logout"
+  },
+  "wordbook": {
+    "title": "Vocabulary",
+    "myWordbooks": "My Wordbooks",
+    "builtIn": "Built-in Wordbooks",
+    "createWordbook": "Create Wordbook",
+    "wordName": "Word",
+    "reading": "Reading",
+    "meaning": "Meaning",
+    "partOfSpeech": "Part of Speech",
+    "example": "Example",
+    "import": "Batch Import",
+    "review": "Today's Review",
+    "stats": "Study Stats",
+    "totalWords": "Total Words",
+    "learned": "Learned",
+    "reviewing": "Reviewing",
+    "mastered": "Mastered",
+    "streak": "Streak Days",
+    "checkIn": "Check In",
+    "score": "Score",
+    "nextReview": "Next Review"
+  },
+  "grammar": {
+    "title": "Grammar Learning",
+    "level": "Level",
+    "category": "Category",
+    "explanation": "Explanation",
+    "examples": "Examples",
+    "quiz": "Quiz",
+    "submit": "Submit Answer",
+    "correct": "Correct!",
+    "incorrect": "Incorrect",
+    "allLevels": "All Levels"
+  },
+  "exam": {
+    "title": "Practice Exams",
+    "start": "Start Exam",
+    "submit": "Submit",
+    "timeLimit": "Time Limit",
+    "minutes": "minutes",
+    "score": "Score",
+    "mistakes": "Mistakes",
+    "review": "Review",
+    "section": "Section"
+  },
+  "video": {
+    "title": "Video Learning",
+    "addVideo": "Add Video",
+    "youtube": "YouTube",
+    "upload": "Upload",
+    "embedded": "Embedded",
+    "note": "Note",
+    "progress": "Progress"
+  },
+  "translate": {
+    "title": "Translate",
+    "input": "Enter text",
+    "output": "Translation",
+    "source": "Source Language",
+    "target": "Target Language",
+    "translate": "Translate"
+  },
+  "community": {
+    "title": "Learning Community",
+    "newPost": "New Post",
+    "comments": "Comments",
+    "like": "Like",
+    "share": "Share",
+    "tags": "Tags"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Operation successful",
+    "confirm": "Confirm",
+    "export": "Export",
+    "import": "Import",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode"
+  }
+}

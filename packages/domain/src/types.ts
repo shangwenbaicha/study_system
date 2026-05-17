@@ -35,9 +35,9 @@ export interface CourseItem {
   workspaceId: string;
   courseName: string;
   teacher: string;
-  startAt: string;       // ISO datetime, e.g. "2026-05-01T09:00:00.000Z"
-  endAt: string;         // ISO datetime, e.g. "2026-05-01T10:30:00.000Z"
-  timezone: Timezone;    // 北京或东京时间
+  startAt: string;
+  endAt: string;
+  timezone: Timezone;
   color: string;
   note?: string;
 }
@@ -63,7 +63,7 @@ export interface CourseUpdateInput {
 }
 
 // ============================================================
-// 学期配置（保留，其他模块可能依赖）
+// 学期配置
 // ============================================================
 
 export interface Semester {
@@ -249,4 +249,245 @@ export interface BackupPayload {
     agendaItems?: AgendaItem[];
     semesters?: Semester[];
   };
+}
+
+// ============================================================
+// ================ 新增模块类型 =============================
+// ============================================================
+
+// ============================================================
+// 模块 4：背单词（艾宾浩斯记忆）
+// ============================================================
+
+export interface WordBook {
+  id: string;
+  userId: string;
+  name: string;
+  language: "japanese" | "english" | "other";
+  wordCount: number;
+  isBuiltIn: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Word {
+  id: string;
+  wordBookId: string;
+  word: string;
+  reading?: string;
+  meaning: string;
+  partOfSpeech?: string;
+  exampleSentence?: string;
+  exampleTranslation?: string;
+  audioUrl?: string;
+  createdAt: string;
+}
+
+export interface WordReview {
+  id: string;
+  wordId: string;
+  userId: string;
+  easeFactor: number;
+  interval: number;
+  repetitions: number;
+  nextReviewAt: string;
+  lastReviewAt: string;
+  status: "learning" | "reviewing" | "mastered";
+}
+
+export interface StudyCheckIn {
+  id: string;
+  userId: string;
+  date: string;
+  createdAt: string;
+}
+
+export interface StudyStats {
+  totalWords: number;
+  learnedWords: number;
+  reviewingWords: number;
+  masteredWords: number;
+  todayReviewCount: number;
+  streakDays: number;
+  totalCheckIns: number;
+}
+
+// ============================================================
+// 模块 5：语法学习
+// ============================================================
+
+export interface GrammarPoint {
+  id: string;
+  language: string;
+  title: string;
+  level: string;
+  explanation: string;
+  category: string;
+  createdAt: string;
+  updatedAt: string;
+  examples?: GrammarExample[];
+  quizzes?: GrammarQuiz[];
+}
+
+export interface GrammarExample {
+  id: string;
+  grammarPointId: string;
+  sentence: string;
+  reading?: string;
+  translation: string;
+  audioUrl?: string;
+}
+
+export interface GrammarQuiz {
+  id: string;
+  grammarPointId: string;
+  question: string;
+  options: string[];
+  correctAnswer: string;
+  explanation?: string;
+}
+
+export interface GrammarQuizResult {
+  correct: boolean;
+  correctAnswer: string;
+  explanation?: string;
+}
+
+// ============================================================
+// 模块 6：模拟真题
+// ============================================================
+
+export interface Exam {
+  id: string;
+  title: string;
+  language: string;
+  level: string;
+  timeLimit: number;
+  createdAt: string;
+  updatedAt: string;
+  questions?: ExamQuestion[];
+}
+
+export interface ExamQuestion {
+  id: string;
+  examId: string;
+  section: string;
+  questionNum: number;
+  question: string;
+  options: string[];
+  correctAnswer: string;
+  explanation?: string;
+  points: number;
+}
+
+export interface ExamAttempt {
+  id: string;
+  examId: string;
+  userId: string;
+  startedAt: string;
+  completedAt?: string;
+  score?: number;
+  totalPoints?: number;
+  answers: ExamAnswer[];
+}
+
+export interface ExamAnswer {
+  questionId: string;
+  selectedAnswer: string;
+  isCorrect: boolean;
+}
+
+export interface MistakeItem {
+  id: string;
+  userId: string;
+  questionId: string;
+  examId?: string;
+  wrongAnswer: string;
+  correctAnswer: string;
+  reviewed: boolean;
+  reviewedAt?: string;
+  createdAt: string;
+}
+
+// ============================================================
+// 模块 7：视频学习
+// ============================================================
+
+export interface VideoResource {
+  id: string;
+  userId: string;
+  title: string;
+  url: string;
+  sourceType: "youtube" | "upload" | "embedded";
+  language: string;
+  duration?: number;
+  thumbnail?: string;
+  createdAt: string;
+  updatedAt: string;
+  notes?: VideoNote[];
+}
+
+export interface VideoNote {
+  id: string;
+  videoId: string;
+  timestamp: number;
+  content: string;
+  createdAt: string;
+}
+
+export interface VideoProgress {
+  id: string;
+  videoId: string;
+  userId: string;
+  progress: number;
+  lastPosition: number;
+  completed: boolean;
+  updatedAt: string;
+}
+
+// ============================================================
+// 模块 8：社群
+// ============================================================
+
+export interface Post {
+  id: string;
+  userId: string;
+  title: string;
+  content: string;
+  tags: string[];
+  language: "zh" | "ja" | "en";
+  likes: number;
+  views: number;
+  pinned: boolean;
+  createdAt: string;
+  updatedAt: string;
+  user?: { id: string; displayName: string };
+  comments?: Comment[];
+  liked?: boolean;
+}
+
+export interface Comment {
+  id: string;
+  postId: string;
+  userId: string;
+  content: string;
+  createdAt: string;
+  user?: { id: string; displayName: string };
+}
+
+export interface PostLike {
+  id: string;
+  postId: string;
+  userId: string;
+  createdAt: string;
+}
+
+// ============================================================
+// 翻译
+// ============================================================
+
+export interface TranslationResult {
+  translatedText: string;
+  sourceLang: string;
+  targetLang: string;
 }

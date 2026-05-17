@@ -1,0 +1,122 @@
+{
+  "app": {
+    "title": "日本語学習システム",
+    "subtitle": "効率的な学習を今日から"
+  },
+  "nav": {
+    "home": "ホーム",
+    "wordbook": "単語帳",
+    "grammar": "文法学習",
+    "exam": "模擬試験",
+    "video": "動画学習",
+    "translate": "翻訳",
+    "course": "時間割",
+    "study": "学習計画",
+    "agenda": "スケジュール",
+    "calendar": "カレンダー",
+    "analytics": "データ分析",
+    "community": "コミュニティ",
+    "backup": "バックアップ",
+    "settings": "設定",
+    "core": "コアモジュール",
+    "global": "グローバル機能"
+  },
+  "auth": {
+    "login": "ログイン",
+    "register": "登録",
+    "email": "メールアドレス",
+    "password": "パスワード",
+    "displayName": "ニックネーム",
+    "loginTitle": "おかえりなさい",
+    "registerTitle": "アカウント作成",
+    "noAccount": "アカウントをお持ちでない方",
+    "hasAccount": "すでにアカウントをお持ちの方",
+    "logout": "ログアウト"
+  },
+  "wordbook": {
+    "title": "単語帳",
+    "myWordbooks": "マイ単語帳",
+    "builtIn": "内蔵単語集",
+    "createWordbook": "単語帳を作成",
+    "wordName": "単語",
+    "reading": "読み方",
+    "meaning": "意味",
+    "partOfSpeech": "品詞",
+    "example": "例文",
+    "import": "一括インポート",
+    "review": "今日の復習",
+    "stats": "学習統計",
+    "totalWords": "総単語数",
+    "learned": "学習済み",
+    "reviewing": "復習中",
+    "mastered": "習得済み",
+    "streak": "連続学習日数",
+    "checkIn": "チェックイン",
+    "score": "スコア",
+    "nextReview": "次回復習"
+  },
+  "grammar": {
+    "title": "文法学習",
+    "level": "レベル",
+    "category": "カテゴリ",
+    "explanation": "文法説明",
+    "examples": "例文",
+    "quiz": "テスト",
+    "submit": "回答を送信",
+    "correct": "正解！",
+    "incorrect": "不正解",
+    "allLevels": "全レベル"
+  },
+  "exam": {
+    "title": "模擬試験",
+    "start": "試験開始",
+    "submit": "提出",
+    "timeLimit": "制限時間",
+    "minutes": "分",
+    "score": "得点",
+    "mistakes": "間違えた問題",
+    "review": "解説を見る",
+    "section": "セクション"
+  },
+  "video": {
+    "title": "動画学習",
+    "addVideo": "動画を追加",
+    "youtube": "YouTube",
+    "upload": "アップロード",
+    "embedded": "埋め込み",
+    "note": "ノート",
+    "progress": "学習進捗"
+  },
+  "translate": {
+    "title": "翻訳",
+    "input": "テキストを入力",
+    "output": "翻訳結果",
+    "source": "翻訳元",
+    "target": "翻訳先",
+    "translate": "翻訳する"
+  },
+  "community": {
+    "title": "学習コミュニティ",
+    "newPost": "投稿する",
+    "comments": "コメント",
+    "like": "いいね",
+    "share": "シェア",
+    "tags": "タグ"
+  },
+  "common": {
+    "save": "保存",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "edit": "編集",
+    "create": "作成",
+    "search": "検索",
+    "loading": "読み込み中...",
+    "error": "エラーが発生しました",
+    "success": "操作成功",
+    "confirm": "確認",
+    "export": "エクスポート",
+    "import": "インポート",
+    "darkMode": "ダークモード",
+    "lightMode": "ライトモード"
+  }
+}
